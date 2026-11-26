@@ -132,12 +132,12 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnExport"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:backgroundTint="@color/excel"
             android:text="Export Excel"
-            android:textSize="16sp"
-            app:cornerRadius="16dp"
+            android:textSize="14sp"
+            app:cornerRadius="12dp"
             app:icon="@drawable/ic_download"
             app:iconGravity="textStart"
             app:iconTint="@color/white" />
