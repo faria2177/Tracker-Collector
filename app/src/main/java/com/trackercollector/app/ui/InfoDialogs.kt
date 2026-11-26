@@ -53,7 +53,7 @@ object InfoDialogs {
         }
     }
 
-    private fun version(a: Activity): Pair<String, Long> {
+    private fun versionInfo(a: Activity): Pair<String, Long> {
         val info = a.packageManager.getPackageInfo(a.packageName, 0)
         return (info.versionName ?: "1.0") to PackageInfoCompat.getLongVersionCode(info)
     }
@@ -83,7 +83,7 @@ object InfoDialogs {
     )
 
     fun version(a: Activity) {
-        val (name, code) = version(a)
+        val (name, code) = versionInfo(a)
         show(
             a, R.drawable.ic_update, R.drawable.bg_tile_blue, R.color.tile_blue_icon,
             "Version $name", "Build $code",
@@ -96,7 +96,7 @@ object InfoDialogs {
     }
 
     fun about(a: Activity) {
-        val (name, _) = version(a)
+        val (name, _) = versionInfo(a)
         show(
             a, R.drawable.ic_info, R.drawable.bg_tile_green, R.color.tile_green_icon,
             "Tracker Collector", "Version $name",
