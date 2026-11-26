@@ -1,13 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="brand">#1E5AA8</color>
-    <color name="brand_dark">#123E78</color>
-    <color name="brand_light">#E3EDFA</color>
+    <!-- Soft, light palette (sage background, white cards, deep green accent) -->
+    <color name="bg">#F3F5F2</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="stroke">#E6E9E5</color>
+    <color name="divider">#ECEFEB</color>
+
+    <color name="primary">#2D5F45</color>
+    <color name="primary_dark">#214733</color>
+    <color name="primary_container">#DDEBE2</color>
+    <color name="on_primary_container">#1F4733</color>
+
+    <color name="text_primary">#1C1F1D</color>
+    <color name="text_secondary">#6B716D</color>
+    <color name="text_label">#737A75</color>
+    <color name="icon">#3A403C</color>
+
+    <color name="tile_green">#DDEBE2</color>
+    <color name="tile_green_icon">#2D5F45</color>
+    <color name="tile_blue">#E1E7F5</color>
+    <color name="tile_blue_icon">#3550A0</color>
+    <color name="tile_amber">#F6EAD7</color>
+    <color name="tile_amber_icon">#B7741C</color>
+    <color name="tile_gray">#EEF0EE</color>
+    <color name="tile_red">#F8E3E1</color>
+    <color name="tile_red_icon">#B3261E</color>
+
     <color name="excel">#1D6F42</color>
     <color name="word">#2B579A</color>
-    <color name="bg">#F5F7FB</color>
-    <color name="text_primary">#1B1F24</color>
-    <color name="text_secondary">#5F6B7A</color>
+    <color name="sheet_grid">#D4D8D4</color>
+    <color name="sheet_header">#F2F2F2</color>
+    <color name="sheet_rowhead">#F7F8F7</color>
+
     <color name="white">#FFFFFF</color>
-    <color name="launcher_bg">#1E5AA8</color>
+    <color name="launcher_bg">#2D5F45</color>
 </resources>

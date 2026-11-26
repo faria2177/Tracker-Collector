@@ -2,6 +2,7 @@ package com.trackercollector.app
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -9,7 +10,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,15 +24,15 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
-import com.trackercollector.app.core.ExportRow
 import com.trackercollector.app.core.ParsedRow
 import com.trackercollector.app.data.Record
 import com.trackercollector.app.data.RecordDb
 import com.trackercollector.app.databinding.ActivityMainBinding
 import com.trackercollector.app.databinding.DialogRecordBinding
-import com.trackercollector.app.export.ExportHelper
-import com.trackercollector.app.export.ExportResult
+import com.trackercollector.app.databinding.ViewActionTileBinding
 import com.trackercollector.app.export.ExportType
+import com.trackercollector.app.export.ExportUi
+import com.trackercollector.app.ui.setupLightBars
 import com.trackercollector.app.ocr.OcrProcessor
 import com.trackercollector.app.ui.RecordAdapter
 import kotlinx.coroutines.Dispatchers
@@ -62,23 +65,39 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
+        setupLightBars(b.root, b.bottomPanel)
         db = RecordDb(this)
         ocr = OcrProcessor(this)
 
         b.recycler.layoutManager = LinearLayoutManager(this)
         b.recycler.adapter = adapter
 
-        b.toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.action_add -> { showEditDialog(null); true }
-                R.id.action_clear -> { confirmClear(); true }
-                else -> false
-            }
+        b.btnAdd.setOnClickListener { showEditDialog(null) }
+        b.btnMore.setOnClickListener { v ->
+            PopupMenu(this, v).apply {
+                menuInflater.inflate(R.menu.main_menu, menu)
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.action_add -> showEditDialog(null)
+                        R.id.action_preview -> openPreview(ExportType.EXCEL)
+                        R.id.action_clear -> confirmClear()
+                    }
+                    true
+                }
+            }.show()
         }
         b.btnScan.setOnClickListener { startScanner() }
         b.btnGallery.setOnClickListener { galleryLauncher.launch("image/*") }
-        b.btnExcel.setOnClickListener { export(ExportType.EXCEL) }
-        b.btnWord.setOnClickListener { export(ExportType.WORD) }
+
+        setupTile(b.actPreview, "Preview", R.drawable.ic_preview, R.drawable.bg_tile_amber, R.color.tile_amber_icon) {
+            openPreview(ExportType.EXCEL)
+        }
+        setupTile(b.actExcel, "Excel", R.drawable.ic_table, R.drawable.bg_tile_green, R.color.excel) {
+            ExportUi.run(this, records, ExportType.EXCEL, b.root, ::setBusy)
+        }
+        setupTile(b.actWord, "Word", R.drawable.ic_doc, R.drawable.bg_tile_blue, R.color.word) {
+            ExportUi.run(this, records, ExportType.WORD, b.root, ::setBusy)
+        }
         b.edtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -222,8 +241,11 @@ class MainActivity : AppCompatActivity() {
             r.name.lowercase().contains(q) || r.designation.lowercase().contains(q) || r.mobile.contains(q)
         }
         adapter.submit(shown)
-        b.txtCount.text = "${records.size} record(s) collected" + if (q.isNotEmpty()) " • ${shown.size} shown" else ""
-        b.txtEmpty.visibility = if (records.isEmpty()) View.VISIBLE else View.GONE
+        b.txtCount.text = records.size.toString()
+        b.txtCountLabel.text = (if (records.size == 1) "record collected" else "records collected") +
+            if (q.isNotEmpty()) " · ${shown.size} match" else ""
+        b.txtSection.text = if (q.isNotEmpty()) "Search results" else "Collected entries"
+        b.emptyBox.visibility = if (records.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun showEditDialog(existing: Record?) {
@@ -280,51 +302,26 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    // ------------------------------------------------------------------ export
+    // ------------------------------------------------------------------ preview / export
 
-    private fun export(type: ExportType) {
+    private fun openPreview(type: ExportType) {
         if (records.isEmpty()) {
-            snack("Nothing to export yet — scan a document first.")
+            snack("Nothing to preview yet — scan a document first.")
             return
         }
-        val rows = records.mapIndexed { i, r -> ExportRow((i + 1).toString(), r.name, r.designation, r.mobile) }
-        showProgress("Creating ${if (type == ExportType.EXCEL) "Excel" else "Word"} file…")
-        lifecycleScope.launch {
-            val result = try {
-                withContext(Dispatchers.IO) { ExportHelper.export(this@MainActivity, rows, type) }
-            } catch (e: Exception) {
-                hideProgress(); info("Export failed", e.message ?: e.toString()); return@launch
-            }
-            hideProgress()
-            showExportDone(result)
-        }
+        startActivity(Intent(this, PreviewActivity::class.java).putExtra(PreviewActivity.EXTRA_TYPE, type.name))
     }
 
-    private fun showExportDone(r: ExportResult) {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(if (r.type == ExportType.EXCEL) "Excel file ready" else "Word file ready")
-            .setMessage("${records.size} entries exported.\n\nSaved to:\n${r.savedLocation}")
-            .setPositiveButton("Share") { _, _ ->
-                val send = Intent(Intent.ACTION_SEND).apply {
-                    type = r.type.mime
-                    putExtra(Intent.EXTRA_STREAM, r.shareUri)
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                }
-                startActivity(Intent.createChooser(send, "Share ${r.fileName}"))
-            }
-            .setNeutralButton("Open") { _, _ ->
-                val view = Intent(Intent.ACTION_VIEW).apply {
-                    setDataAndType(r.shareUri, r.type.mime)
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                }
-                try {
-                    startActivity(view)
-                } catch (e: Exception) {
-                    snack("No app found to open .${r.type.ext} files")
-                }
-            }
-            .setNegativeButton("Close", null)
-            .show()
+    private fun setupTile(t: ViewActionTileBinding, label: String, icon: Int, bg: Int, tint: Int, onClick: () -> Unit) {
+        t.tileLabel.text = label
+        t.tileIcon.setImageResource(icon)
+        t.tileIcon.setBackgroundResource(bg)
+        t.tileIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, tint))
+        t.root.setOnClickListener { onClick() }
+    }
+
+    private fun setBusy(busy: Boolean) {
+        if (busy) showProgress("Creating file…") else hideProgress()
     }
 
     // ------------------------------------------------------------------ helpers
@@ -342,7 +339,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setButtonsEnabled(e: Boolean) {
         b.btnScan.isEnabled = e; b.btnGallery.isEnabled = e
-        b.btnExcel.isEnabled = e; b.btnWord.isEnabled = e
+        b.actExcel.root.isEnabled = e; b.actWord.root.isEnabled = e; b.actPreview.root.isEnabled = e
     }
 
     private fun snack(msg: String) = Snackbar.make(b.root, msg, Snackbar.LENGTH_LONG).show()

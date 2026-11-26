@@ -5,7 +5,7 @@
     <string name="gallery">Gallery</string>
     <string name="excel">Excel</string>
     <string name="word">Word</string>
-    <string name="empty_state">No data yet.\nTap Scan to scan an application sheet.\nSerial, name, designation and mobile number will be collected automatically.</string>
+    <string name="empty_state">Tap Scan to scan an application sheet.\nSerial, name, designation and mobile number are collected automatically.</string>
     <string name="add_manually">Add manually</string>
     <string name="clear_all">Clear all</string>
     <string name="name">Name of Customer</string>
