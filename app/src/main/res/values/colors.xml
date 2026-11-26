@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand">#1E5AA8</color>
+    <color name="brand_dark">#123E78</color>
+    <color name="brand_light">#E3EDFA</color>
+    <color name="excel">#1D6F42</color>
+    <color name="word">#2B579A</color>
+    <color name="bg">#F5F7FB</color>
+    <color name="text_primary">#1B1F24</color>
+    <color name="text_secondary">#5F6B7A</color>
+    <color name="white">#FFFFFF</color>
+    <color name="launcher_bg">#1E5AA8</color>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tracker Collector</string>
+    <string name="scan">Scan</string>
+    <string name="gallery">Gallery</string>
+    <string name="excel">Excel</string>
+    <string name="word">Word</string>
+    <string name="empty_state">No data yet.\nTap Scan to scan an application sheet.\nSerial, name, designation and mobile number will be collected automatically.</string>
+    <string name="add_manually">Add manually</string>
+    <string name="clear_all">Clear all</string>
+    <string name="name">Name of Customer</string>
+    <string name="designation">Customer Designation</string>
+    <string name="mobile">Mobile Number</string>
+    <string name="serial">SL (from document)</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="search_hint">Search name, designation or mobile</string>
+</resources>
