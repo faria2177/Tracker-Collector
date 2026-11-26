@@ -74,7 +74,8 @@ object InfoDialogs {
         a, R.drawable.ic_star, R.drawable.bg_tile_amber, R.color.tile_amber_icon,
         "Credit", "Made with care",
         listOf(
-            Row("★", "Developer", "Tahmina (GitHub: faria2177)"),
+            Row("★", "Developer", "Md Jahidul Islam"),
+            Row("💡", "Idea", "Md Asaduzzaman"),
             Row("◎", "Text recognition", "Google ML Kit Text Recognition — works offline on the phone"),
             Row("▣", "Document scanner", "Google ML Kit Document Scanner"),
             Row("◆", "Design", "Material Design 3 components for Android")
