@@ -11,8 +11,8 @@ import androidx.core.view.WindowInsetsCompat
 /** Light edge-to-edge bars with dark icons; pads the header and the bottom panel. */
 fun ComponentActivity.setupLightBars(root: View, bottom: View?) {
     enableEdgeToEdge(
-        statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
-        navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+        statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
+        navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
     )
     val bottomBase = bottom?.paddingBottom ?: 0
     ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->

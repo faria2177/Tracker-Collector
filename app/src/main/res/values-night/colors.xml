@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#121513</color>
+    <color name="surface">#1C201D</color>
+    <color name="stroke">#2D322E</color>
+    <color name="divider">#2A2E2B</color>
+
+    <color name="primary">#3F7D5C</color>
+    <color name="primary_dark">#2D5F45</color>
+    <color name="primary_container">#24392D</color>
+    <color name="on_primary_container">#BFE3CC</color>
+
+    <color name="text_primary">#E6EAE7</color>
+    <color name="text_secondary">#A3AAA5</color>
+    <color name="text_label">#9AA19C</color>
+    <color name="icon">#D5DAD6</color>
+
+    <color name="tile_green">#24392D</color>
+    <color name="tile_green_icon">#8FCFA9</color>
+    <color name="tile_blue">#252C42</color>
+    <color name="tile_blue_icon">#AAB9F0</color>
+    <color name="tile_amber">#3A3021</color>
+    <color name="tile_amber_icon">#E8B66A</color>
+    <color name="tile_gray">#2A2E2B</color>
+    <color name="tile_red">#3D2422</color>
+    <color name="tile_red_icon">#F2B8B5</color>
+
+    <color name="excel">#4FAE7B</color>
+    <color name="word">#6E95D8</color>
+    <color name="sheet_grid">#3A3F3B</color>
+    <color name="sheet_header">#262A27</color>
+    <color name="sheet_rowhead">#222623</color>
+</resources>

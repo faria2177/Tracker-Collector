@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_add" android:title="@string/add_manually" />
-    <item android:id="@+id/action_preview" android:title="Preview table" />
-    <item android:id="@+id/action_clear" android:title="@string/clear_all" />
+    <group android:id="@+id/grp_data">
+        <item android:id="@+id/action_add" android:title="@string/add_manually" />
+        <item android:id="@+id/action_clear" android:title="@string/clear_all" />
+    </group>
+    <group android:id="@+id/grp_app">
+        <item android:id="@+id/action_dark" android:title="Dark mode" android:checkable="true" />
+        <item android:id="@+id/action_tutorial" android:title="Tutorial" />
+        <item android:id="@+id/action_credit" android:title="Credit" />
+        <item android:id="@+id/action_version" android:title="Version" />
+        <item android:id="@+id/action_about" android:title="About" />
+    </group>
 </menu>

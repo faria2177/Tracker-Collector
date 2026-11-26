@@ -29,7 +29,8 @@ import com.trackercollector.app.data.Record
 import com.trackercollector.app.data.RecordDb
 import com.trackercollector.app.databinding.ActivityMainBinding
 import com.trackercollector.app.databinding.DialogRecordBinding
-import com.trackercollector.app.databinding.ViewActionTileBinding
+import com.trackercollector.app.databinding.ViewNavItemBinding
+import com.trackercollector.app.ui.InfoDialogs
 import com.trackercollector.app.export.ExportType
 import com.trackercollector.app.export.ExportUi
 import com.trackercollector.app.ui.setupLightBars
@@ -73,29 +74,19 @@ class MainActivity : AppCompatActivity() {
         b.recycler.adapter = adapter
 
         b.btnAdd.setOnClickListener { showEditDialog(null) }
-        b.btnMore.setOnClickListener { v ->
-            PopupMenu(this, v).apply {
-                menuInflater.inflate(R.menu.main_menu, menu)
-                setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.action_add -> showEditDialog(null)
-                        R.id.action_preview -> openPreview(ExportType.EXCEL)
-                        R.id.action_clear -> confirmClear()
-                    }
-                    true
-                }
-            }.show()
-        }
+        b.btnMore.setOnClickListener { v -> showMoreMenu(v) }
         b.btnScan.setOnClickListener { startScanner() }
-        b.btnGallery.setOnClickListener { galleryLauncher.launch("image/*") }
 
-        setupTile(b.actPreview, "Preview", R.drawable.ic_preview, R.drawable.bg_tile_amber, R.color.tile_amber_icon) {
+        setupNav(b.navGallery, "Gallery", R.drawable.ic_gallery, R.drawable.bg_tile_green, R.color.tile_green_icon) {
+            galleryLauncher.launch("image/*")
+        }
+        setupNav(b.navPreview, "Preview", R.drawable.ic_preview, R.drawable.bg_tile_amber, R.color.tile_amber_icon) {
             openPreview(ExportType.EXCEL)
         }
-        setupTile(b.actExcel, "Excel", R.drawable.ic_table, R.drawable.bg_tile_green, R.color.excel) {
+        setupNav(b.navExcel, "Excel", R.drawable.ic_table, R.drawable.bg_tile_green, R.color.excel) {
             ExportUi.run(this, records, ExportType.EXCEL, b.root, ::setBusy)
         }
-        setupTile(b.actWord, "Word", R.drawable.ic_doc, R.drawable.bg_tile_blue, R.color.word) {
+        setupNav(b.navWord, "Word", R.drawable.ic_doc, R.drawable.bg_tile_blue, R.color.word) {
             ExportUi.run(this, records, ExportType.WORD, b.root, ::setBusy)
         }
         b.edtSearch.addTextChangedListener(object : TextWatcher {
@@ -106,6 +97,26 @@ class MainActivity : AppCompatActivity() {
 
         reload()
         handleShareIntent(intent)
+        if (savedInstanceState == null && App.firstTutorial(this)) InfoDialogs.tutorial(this)
+    }
+
+    private fun showMoreMenu(anchor: View) {
+        PopupMenu(this, anchor).apply {
+            menuInflater.inflate(R.menu.main_menu, menu)
+            menu.findItem(R.id.action_dark).isChecked = App.isDark(this@MainActivity)
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.action_add -> showEditDialog(null)
+                    R.id.action_clear -> confirmClear()
+                    R.id.action_dark -> App.setDark(this@MainActivity, !App.isDark(this@MainActivity))
+                    R.id.action_tutorial -> InfoDialogs.tutorial(this@MainActivity)
+                    R.id.action_credit -> InfoDialogs.credit(this@MainActivity)
+                    R.id.action_version -> InfoDialogs.version(this@MainActivity)
+                    R.id.action_about -> InfoDialogs.about(this@MainActivity)
+                }
+                true
+            }
+        }.show()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -312,11 +323,11 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, PreviewActivity::class.java).putExtra(PreviewActivity.EXTRA_TYPE, type.name))
     }
 
-    private fun setupTile(t: ViewActionTileBinding, label: String, icon: Int, bg: Int, tint: Int, onClick: () -> Unit) {
-        t.tileLabel.text = label
-        t.tileIcon.setImageResource(icon)
-        t.tileIcon.setBackgroundResource(bg)
-        t.tileIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, tint))
+    private fun setupNav(t: ViewNavItemBinding, label: String, icon: Int, bg: Int, tint: Int, onClick: () -> Unit) {
+        t.navLabel.text = label
+        t.navIcon.setImageResource(icon)
+        t.navIcon.setBackgroundResource(bg)
+        t.navIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, tint))
         t.root.setOnClickListener { onClick() }
     }
 
@@ -338,8 +349,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setButtonsEnabled(e: Boolean) {
-        b.btnScan.isEnabled = e; b.btnGallery.isEnabled = e
-        b.actExcel.root.isEnabled = e; b.actWord.root.isEnabled = e; b.actPreview.root.isEnabled = e
+        b.btnScan.isEnabled = e; b.navGallery.root.isEnabled = e
+        b.navExcel.root.isEnabled = e; b.navWord.root.isEnabled = e; b.navPreview.root.isEnabled = e
     }
 
     private fun snack(msg: String) = Snackbar.make(b.root, msg, Snackbar.LENGTH_LONG).show()

@@ -107,7 +107,7 @@ class PreviewActivity : AppCompatActivity() {
         val widths = intArrayOf(50, 200, 170, 130)
         val page = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundColor(ContextCompat.getColor(context, R.color.white))
+            setBackgroundColor(ContextCompat.getColor(context, R.color.surface))
             elevation = dp(3).toFloat()
             setPadding(dp(28), dp(28), dp(28), dp(40))
             minimumHeight = dp(560)
@@ -131,7 +131,7 @@ class PreviewActivity : AppCompatActivity() {
         }
         page.addView(table)
         return FrameLayout(this).apply {
-            setBackgroundColor(0xFFE9ECE8.toInt())
+            setBackgroundColor(ContextCompat.getColor(context, R.color.bg))
             setPadding(dp(16), dp(16), dp(16), dp(16))
             addView(page)
         }
